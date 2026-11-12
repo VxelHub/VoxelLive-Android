@@ -22,29 +22,19 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Setup Python 3.14
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Check Python
+        run: python3.14 --version
+
       - name: Setup Android SDK
-        shell: bash
         run: |
-          set -e
-
-          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
-
-          echo "Android SDK: $SDK_ROOT"
-
-          SDKMANAGER=$(find "$SDK_ROOT/cmdline-tools" \
-            -type f -name sdkmanager 2>/dev/null | sort -V | tail -n 1)
-
-          if [ -z "$SDKMANAGER" ]; then
-            echo "ERROR: sdkmanager tidak ditemukan!"
-            find "$SDK_ROOT" -maxdepth 4 -type f -name sdkmanager
-            exit 1
-          fi
-
-          echo "Menggunakan: $SDKMANAGER"
-
-          yes | "$SDKMANAGER" --sdk_root="$SDK_ROOT" --licenses || true
-
-          "$SDKMANAGER" --sdk_root="$SDK_ROOT" \
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT}}"
+          yes | "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
             "platforms;android-35" \
             "build-tools;35.0.0" \
             "platform-tools"
