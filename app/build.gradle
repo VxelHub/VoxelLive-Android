@@ -31,8 +31,11 @@ chaquopy {
     defaultConfig {
         version = "3.14"
         pip {
-            options("--extra-index-url", "https://eutalix.github.io/android-pydantic-core/")
-            install("-r", "src/main/python/requirements.txt")
-        }
+    options(
+        "--extra-index-url", "https://eutalix.github.io/android-pydantic-core/",
+        "--extra-index-url", "https://www.piwheels.org/simple"
+    )
+    install("-r", "src/main/python/requirements.txt")
+}
     }
 }
