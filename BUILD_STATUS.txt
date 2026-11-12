@@ -1,0 +1,16 @@
+VoxelLive Android 2.0.2-alpha2 — SOURCE TEST CANDIDATE
+
+PASSED:
+- Python syntax: app/src/main/python/server.py (py_compile)
+- JavaScript syntax: app/src/main/python/web/app.js (node --check)
+- Backend smoke test: gift multi-command, PlayerName/NameGift expansion, Follow config persistence, preset/gifts JSON persistence
+- Frontend selector check: all $('#id') selectors exist in index.html
+
+NOT VERIFIED:
+- Android Gradle build / APK packaging
+- Chaquopy import of the prebuilt Android pydantic-core wheel
+- TikTok LIVE public stream connection on a physical Android device
+- Minecraft Bedrock WebSocket connection on a physical device
+- Cloud account flow update to Name + Password + Redeem Code
+
+The pydantic-core wheel publisher documents Android/Termux testing and says other Android Python runtimes such as Chaquopy are expected to work but are not CI-tested. Treat this package as a test candidate, not a release APK.

@@ -1,0 +1,6 @@
+# TikTokLive 7 uses Pydantic v2. Pin the Pydantic/core pair so Chaquopy's
+# Python 3.14 arm64 build can select the Android wheel from the extra index.
+websockets>=14,<16
+TikTokLive==7.0.1
+pydantic==2.14.0
+pydantic-core==2.50.0

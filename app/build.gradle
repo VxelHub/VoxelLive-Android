@@ -1,0 +1,38 @@
+plugins {
+    id 'com.android.application'
+    id 'com.chaquo.python'
+}
+
+android {
+    namespace 'com.voxellive.android'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.voxellive.android'
+        minSdk 24
+        // Keep targetSdk 34 for this sideload build so Android 15's
+        // target-35 dataSync foreground-service time limit does not apply.
+        targetSdk 34
+        versionCode 2
+        versionName '2.0.2-alpha2'
+        ndk {
+            // Python 3.14 in Chaquopy is 64-bit. The bundled native wheel is arm64.
+            abiFilters 'arm64-v8a'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+chaquopy {
+    defaultConfig {
+        version = "3.14"
+        pip {
+            options("--extra-index-url", "https://eutalix.github.io/android-pydantic-core/")
+            install("-r", "src/main/python/requirements.txt")
+        }
+    }
+}
