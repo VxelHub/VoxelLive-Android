@@ -551,18 +551,41 @@ async def dispatch_live_command(command: str, event_name: str, sender: str) -> t
 
 
 async def minecraft_handler(socket):
+    """Accept only one Minecraft client for this local VoxelLive installation."""
     global mc_socket
+
     if ACTIVE_USER_ID is None:
         try:
             await socket.close(code=4001, reason="Login required")
         except Exception:
             pass
         return
+
+    # Reserve the local Minecraft slot before the first await. This prevents
+    # a second client from replacing the socket used by TikTok gift commands.
     with state_lock:
-        mc_socket = socket
-        state["minecraft_connected"] = True
-        state["minecraft_connected_at"] = time.time()
-        state["minecraft_last_error"] = None
+        current = mc_socket
+        current_state = getattr(current, "state", None) if current is not None else None
+        current_state_name = getattr(current_state, "name", None)
+        already_connected = current is not None and current_state_name != "CLOSED"
+
+        if not already_connected:
+            mc_socket = socket
+            state["minecraft_connected"] = True
+            state["minecraft_connected_at"] = time.time()
+            state["minecraft_last_error"] = None
+
+    if already_connected:
+        log.warning("Rejected an additional Minecraft WebSocket connection")
+        try:
+            await socket.close(
+                code=4002,
+                reason="Minecraft connection already active"
+            )
+        except Exception:
+            pass
+        return
+
     log.info("Minecraft WebSocket connected")
     try:
         await socket.send(subscribe_payload("PlayerMessage"))
